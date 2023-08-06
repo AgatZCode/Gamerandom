@@ -23,6 +23,61 @@ function loadGame() {
     }
 }
 
+function startGame(computer, score, winningScore, level, highestLevel, timeLimit, reset, achievements) {
+    rl.question("Masukkan angka : ", (input) => {
+        if (!Number.isInteger(parseInt(input)) || parseInt(input) < 1 || parseInt(input) > 9) {
+            console.log("Masukkan angka valid antara 1 dan 9.");
+            startGame(computer, score, winningScore, level, highestLevel, timeLimit, reset, achievements);
+            return;
+        }
+
+        const elapsedSeconds = (new Date().getTime() - startTime) / 1000;
+
+        if (parseInt(input) === computer) {
+            console.log(`Menang! Angka yang benar adalah ${computer}`);
+            score += winningScore * level;
+            reset = 3;
+            level += 1;
+            highestLevel = Math.max(highestLevel, level);
+
+            if (level === 5 && !achievements.includes('Level 5 Clear')) {
+                console.log('Achievement Unlocked: Level 5 Clear');
+                achievements.push('Level 5 Clear');
+            }
+        } else {
+            console.log(`Salah! Angka yang benar adalah ${computer}`);
+            score -= 5;
+            reset -= 1;
+        }
+
+        console.log(`Skor Anda: ${score}`);
+
+        if (level % 3 === 0) {
+            timeLimit += 5;
+        }
+
+        if (level <= highestLevel) {
+            console.log(`Level tertinggi yang dicapai: ${highestLevel}`);
+        }
+
+        if (reset > 0) {
+            console.log(`Tersisa ${reset} kesempatan lagi.`);
+            console.log(`Anda memiliki waktu ${timeLimit} detik untuk menebak.`);
+            startGame(getRandomNumber(1, 9), score, winningScore, level, highestLevel, timeLimit, reset, achievements);
+        } else {
+            const dataToSave = {
+                score: score,
+                reset: reset,
+                level: level,
+                highestLevel: highestLevel,
+                achievements: achievements
+            };
+            saveGame(dataToSave);
+            rl.close();
+        }
+    });
+}
+
 function playGame() {
     let score = 0;
     let reset = 3;
@@ -30,7 +85,6 @@ function playGame() {
     let level = 1;
     let highestLevel = 1;
     let timeLimit = 10;
-    let powerUpUsed = false;
     let achievements = [];
 
     const savedData = loadGame();
@@ -45,104 +99,11 @@ function playGame() {
     console.log("Welcome to Game");
     console.log("Rules: Saat kamu salah menebak, skor akan dikurangkan -5. Hati-hati!\n");
 
-    while (reset > 0) {
-        console.log(`====== GAME LEVEL ${level} ======`);
-        console.log("Tebak random (1-9)");
-        const computer = getRandomNumber(1, 9);
-        const player = rl.question("Masukkan angka : ", (input) => {
-            if (!Number.isInteger(parseInt(input)) || parseInt(input) < 1 || parseInt(input) > 9) {
-                console.log("Masukkan angka valid antara 1 dan 9.");
-                playGame();
-                return;
-            }
-
-            const elapsedSeconds = (new Date().getTime() - startTime) / 1000;
-
-            if (parseInt(input) === computer) {
-                console.log(`Menang! Angka yang benar adalah ${computer}`);
-                score += winningScore * level;
-                reset = 3;
-                level += 1;
-                highestLevel = Math.max(highestLevel, level);
-
-                if (level === 5 && !achievements.includes('Level 5 Clear')) {
-                    console.log('Achievement Unlocked: Level 5 Clear');
-                    achievements.push('Level 5 Clear');
-                }
-            } else {
-                console.log(`Salah! Angka yang benar adalah ${computer}`);
-                score -= 5;
-                reset -= 1;
-            }
-
-            console.log(`Skor Anda: ${score}`);
-
-            if (level % 3 === 0) {
-                timeLimit += 5;
-            }
-
-            if (level <= highestLevel) {
-                console.log(`Level tertinggi yang dicapai: ${highestLevel}`);
-            }
-
-            if (reset > 0) {
-                console.log(`Tersisa ${reset} kesempatan lagi.`);
-                console.log(`Anda memiliki waktu ${timeLimit} detik untuk menebak.`);
-                startGame();
-            }
-        });
-
-        const startTime = new Date().getTime();
-
-        function startGame() {
-            const player = rl.question("Masukkan angka : ", (input) => {
-                if (!Number.isInteger(parseInt(input)) || parseInt(input) < 1 || parseInt(input) > 9) {
-                    console.log("Masukkan angka valid antara 1 dan 9.");
-                    startGame();
-                    return;
-                }
-
-                const elapsedSeconds = (new Date().getTime() - startTime) / 1000;
-
-                if (parseInt(input) === computer) {
-                    console.log(`Menang! Angka yang benar adalah ${computer}`);
-                    score += winningScore * level;
-                    reset = 3;
-                    level += 1;
-                    highestLevel = Math.max(highestLevel, level);
-                } else {
-                    console.log(`Salah! Angka yang benar adalah ${computer}`);
-                    score -= 5;
-                    reset -= 1;
-                }
-
-                console.log(`Skor Anda: ${score}`);
-
-                if (level % 3 === 0) {
-                    timeLimit += 5;
-                }
-
-                if (level <= highestLevel) {
-                    console.log(`Level tertinggi yang dicapai: ${highestLevel}`);
-                }
-
-                if (reset > 0) {
-                    console.log(`Tersisa ${reset} kesempatan lagi.`);
-                    console.log(`Anda memiliki waktu ${timeLimit} detik untuk menebak.`);
-                    startGame();
-                }
-            });
-        }
-    }
-
-    const dataToSave = {
-        score: score,
-        reset: reset,
-        level: level,
-        highestLevel: highestLevel,
-        achievements: achievements
-    };
-    saveGame(dataToSave);
+    console.log(`====== GAME LEVEL ${level} ======`);
+    console.log("Tebak random (1-9)");
+    const computer = getRandomNumber(1, 9);
+    const startTime = new Date().getTime();
+    startGame(computer, score, winningScore, level, highestLevel, timeLimit, reset, achievements);
 }
 
 playGame();
