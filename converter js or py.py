@@ -4,7 +4,8 @@ def listmenu():
     os.system("title Menu List")
     os.system("color 0b")
     os.system('cls')
-    print("""[!] Github : github.com/AgatZCode
+    print(""" Credit : uazeh
+    [!] Github : github.com/AgatZCode
 
 [+] Menu :
 
