@@ -1,0 +1,1 @@
+gatau game angka kali
