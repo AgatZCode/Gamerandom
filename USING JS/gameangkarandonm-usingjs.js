@@ -37,7 +37,7 @@ function startGame(computer, score, winningScore, level, highestLevel, timeLimit
             console.log(`Menang! Angka yang benar adalah ${computer}`);
             score += winningScore * level;
 
-            // Check for level power-up
+            //untuklevelup jika menang banyak bisa mendapatkan beberapa poin lagi dari elvel up ini
             if (level % 4 === 0) {
                 const powerUpPoints = getRandomNumber(10, 30);
                 score += powerUpPoints;
