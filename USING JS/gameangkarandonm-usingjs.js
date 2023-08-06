@@ -36,6 +36,14 @@ function startGame(computer, score, winningScore, level, highestLevel, timeLimit
         if (parseInt(input) === computer) {
             console.log(`Menang! Angka yang benar adalah ${computer}`);
             score += winningScore * level;
+
+            // Check for level power-up
+            if (level % 4 === 0) {
+                const powerUpPoints = getRandomNumber(10, 30);
+                score += powerUpPoints;
+                console.log(`Level Power-Up! Anda mendapatkan ${powerUpPoints} tambahan poin.`);
+            }
+
             reset = 3;
             level += 1;
             highestLevel = Math.max(highestLevel, level);
